@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
 
+require 'json'
 require 'sinatra/base'
 require 'logger'
 require 'pg'
 
 class App < Sinatra::Base
 
-    errfile = File.new("error.log", 'a+')
-    errfile.sync = true
+#    errfile = File.new("error.log", 'a+')
+#    errfile.sync = true
 
     configure do
         logfile = File.new("access.log", 'a+')
@@ -21,16 +22,27 @@ class App < Sinatra::Base
     enable :sessions
     set :server, "thin"
 
-    before do
-        env["rack.errors"] = 
-    end
-
     get '/' do
-        logger.info "loading data"
         erb :index
     end
 
+    not_found do
+        erb :not_found
+    end
+
+    error do
+        erb :error
+    end
+
+    get '/hello' do 
+        { message: "hello" }.to_json
+    end
 end
+
+Process.daemon(true,true)
+
+pid_file = "si4.pid"
+File.open(pid_file, 'w') { |f| f.write Process.pid }
 
 App.run!
 #EOF
