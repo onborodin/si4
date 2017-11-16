@@ -1,0 +1,42 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title></title>
+        <link rel="stylesheet" href="/css/foundation-float.min.css">
+        <link rel="stylesheet" href="/css/datatables.css"/>
+        <link rel="stylesheet" href="/css/app.css">
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/datatables.min.js"></script>
+        <script src="/js/foundation.min.js"></script>
+    </head>
+
+    <body>
+        <div class="top-bar" id="topbar-menu">
+            <div class="top-bar-left">
+                <ul class="dropdown menu" data-dropdown-menu>
+                    <li class="menu-text">Tmpl</li>
+                </ul>
+          </div>
+        </div>
+
+        <div class="row">&nbsp;</div>
+            <div class="row">
+<!- end of head template ->
+<%= yield %>
+<!- begin of tail template ->
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <p class="text-center"><small>Made by <a href="http://wiki.unix7.org">Borodin Oleg</a></small></p>
+        </div>
+
+        <script src="/js/app.js"></script>
+    </body>
+</html>
+<!- end of tail template ->
+<!- EOF ->
