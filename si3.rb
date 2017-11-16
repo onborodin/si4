@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 
 require 'sinatra'
+require 'pg'
 
 set :public_folder, 'public'
 set :views, 'tmpl'
 
 get '/' do
-    erb :index
+    haml :index
 end
 #EOF

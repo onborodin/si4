@@ -1,0 +1,29 @@
+!!!
+%html.no-js{:dir => "ltr", :lang => "en"}
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "ie=edge", "http-equiv" => "x-ua-compatible"}/
+    %meta{:content => "width=device-width, initial-scale=1.0", :name => "viewport"}/
+    %title
+    %link{:href => "/css/foundation-float.min.css", :rel => "stylesheet"}/
+    %link{:href => "/css/datatables.css", :rel => "stylesheet"}/
+    %link{:href => "/css/app.css", :rel => "stylesheet"}/
+    %script{:src => "/js/jquery.min.js"}
+    %script{:src => "/js/datatables.min.js"}
+    %script{:src => "/js/foundation.min.js"}
+  %body
+    #topbar-menu.top-bar
+      .top-bar-left
+        %ul.dropdown.menu{"data-dropdown-menu" => ""}
+          %li.menu-text Tmpl
+    .row  
+    .row
+      = yield
+    %hr/
+    .row
+      %p.text-center
+        %small
+          Made by
+          %a{:href => "http://wiki.unix7.org"} Borodin Oleg
+    %script{:src => "/js/app.js"}
