@@ -2,6 +2,9 @@
 conn = PG.connect :dbname => "mail"
 res = conn.exec('select * from alias order by id')
 %>
+
+<%= %>
+
 <table>
 <% res.each do |row| %>
     <tr>

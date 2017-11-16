@@ -5,8 +5,18 @@ require 'pg'
 
 set :public_folder, 'public'
 set :views, 'tmpl'
+enable :sessions
+
+class Model
+  def hello
+    "Hello!"
+  end
+end
+
+m = Model.new
 
 get '/' do
-    haml :index
+    logger.info "loading data"
+    erb :index, :m => m
 end
 #EOF
