@@ -7,8 +7,15 @@ require 'pg'
 
 class App < Sinatra::Base
 
-#    errfile = File.new("error.log", 'a+')
-#    errfile.sync = true
+    @logfile = "access.log"
+    @errfile = "error.log"
+    @pidfile = "app.pid"
+
+    class << self
+        attr_accessor :logfile
+        attr_accessor :errfile
+        attr_accessor :pidfile
+    end
 
     configure do
         logfile = File.new("access.log", 'a+')
@@ -35,14 +42,25 @@ class App < Sinatra::Base
     end
 
     get '/hello' do 
+        content_type :json
         { message: "hello" }.to_json
     end
 end
 
-Process.daemon(true,true)
+#Process.euid = Etc.getpwnam("www").uid
+#Process.daemon true, true
 
-pid_file = "si4.pid"
-File.open(pid_file, 'w') { |f| f.write Process.pid }
+begin
+    File.open(App.pidfile, 'w') do
+            |file| file.write Process.pid
+    end
+rescue
+    puts "Cannot write pid file #{App.pidfile}\n"
+    exit
+end
 
 App.run!
+
+File.delete App.pidfile if File.exist? App.pidfile
+
 #EOF
