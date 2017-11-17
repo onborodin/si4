@@ -7,9 +7,9 @@ require 'pg'
 
 class App < Sinatra::Base
 
-    @logfile = "@APP_LOGDIR@/access.log"
-    @errfile = "@APP_LOGDIR@/error.log"
-    @pidfile = "@APP_RUNDIR@/app.pid"
+    @logfile = "/var/log/si4/access.log"
+    @errfile = "/var/log/si4/error.log"
+    @pidfile = "/var/run/si4/app.pid"
 
     class << self
         attr_accessor :logfile
@@ -23,8 +23,8 @@ class App < Sinatra::Base
         use Rack::CommonLogger, logfile
     end
 
-    set :public_folder, '@APP_LIBDIR@/public'
-    set :views, '@APP_LIBDIR@/tmpl'
+    set :public_folder, '/usr/local/share/si4/public'
+    set :views, '/usr/local/share/si4/tmpl'
     set :logging, false
     enable :sessions
     set :server, "thin"

@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# $Id$
+#
+# PROVIDE: si4
+# REQUIRE: LOGIN
+
+. /etc/rc.subr
+
+name="si4"
+rcvar="si4_enable"
+
+pidfile="@APP_RUNDIR@"/si4.pid
+command="@prefix@/sbin/${name}"
+command_args=""
+
+load_rc_config ${name}
+
+: ${si4_enable:="NO"}
+
+run_rc_command "$1"
+#EOF

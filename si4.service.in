@@ -1,0 +1,12 @@
+[Unit]
+Description=tmpl
+
+[Service]
+Type=forking
+PIDFile=@APP_RUNDIR@/tmpl.pid
+ExecStart=@prefix@/sbin/tmpl
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+
