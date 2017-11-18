@@ -6,10 +6,16 @@ res = conn.exec('select * from alias order by id')
 <%= %>
 
 <table>
+    <thead>
+        <td>id</td>
+        <td>address</td>
+        <td>goto</td>
+    </thead>
 <% res.each do |row| %>
     <tr>
     <td><%= row['id'] %></td>
     <td><%= row['address'] %></td>
+    <td><%= row['goto'] %></td>
 <% end %>
 </table>
 

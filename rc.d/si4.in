@@ -10,9 +10,10 @@
 name="si4"
 rcvar="si4_enable"
 
-pidfile="@APP_RUNDIR@"/si4.pid
+pidfile="@APP_RUNDIR@/app.pid"
 command="@prefix@/sbin/${name}"
 command_args=""
+procname="ruby /usr/local/sbin/${name}"
 
 load_rc_config ${name}
 

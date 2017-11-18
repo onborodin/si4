@@ -1,10 +1,10 @@
 [Unit]
-Description=tmpl
+Description=si4
 
 [Service]
 Type=forking
-PIDFile=/var/run/si4/tmpl.pid
-ExecStart=/usr/local/sbin/tmpl
+PIDFile=/var/run/si4/si4.pid
+ExecStart=/usr/local/sbin/si4
 ExecReload=/bin/kill -HUP $MAINPID
 
 [Install]

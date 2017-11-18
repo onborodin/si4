@@ -41,9 +41,10 @@ nobase_dist_pkgdata_DATA = \
 	public/js/jquery.js \
 	public/js/jquery.min.js \
 	public/js/what-input.js \
-	tmpl/not_found.erb \
-	tmpl/index.erb \
-	tmpl/layout.erb \
-	tmpl/error.erb
+	templ/not_found.erb \
+	templ/index.erb \
+	templ/layout.erb \
+	templ/login.erb \
+	templ/error.erb
 
 #EOF
