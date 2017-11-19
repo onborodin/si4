@@ -10,6 +10,22 @@ require 'htauth'
 require 'sinatra/base'
 require 'thin'
 
+class Alias
+    def initialize(dbname)
+        @dbname = dbname
+    end
+    def dbname
+        @dbname
+    end
+    def list
+        conn = PG.connect :dbname => @dbname
+        res = conn.exec('select * from alias order by id')
+        return res
+    end
+end
+
+
+
 class SecureThinBackend < Thin::Backends::TcpServer
   def initialize(host, port, options)
     super(host, port)
@@ -17,6 +33,7 @@ class SecureThinBackend < Thin::Backends::TcpServer
     @ssl_options = options
   end
 end
+
 
 class App < Sinatra::Base
 
@@ -137,7 +154,9 @@ class App < Sinatra::Base
     end
 
     get '/' do
-        auth?
+#        auth?
+        @name = "foo"
+        @alias = Alias.new('mail')
         erb :index
     end
 

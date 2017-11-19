@@ -18,6 +18,20 @@ class SecureThinBackend < Thin::Backends::TcpServer
   end
 end
 
+class Alias
+    def initialize(dbname)
+        @dbname = dbname
+    end
+    def dbname
+        @dbname
+    end
+    def list
+        conn = PG.connect :dbname => @dbname
+        res = conn.exec('select * from alias order by id')
+        return res
+    end
+end
+
 class App < Sinatra::Base
 
     @@pwfile = "/usr/local/etc/si4/pw"
@@ -137,7 +151,9 @@ class App < Sinatra::Base
     end
 
     get '/' do
-        auth?
+#        auth?
+        @name = "foo"
+        @alias = Alias.new('mail')
         erb :index
     end
 

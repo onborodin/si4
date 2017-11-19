@@ -587,6 +587,7 @@ LIBOBJS
 APP_LIBDIR
 APP_GROUP
 APP_USER
+APP_DBDIR
 APP_RUNDIR
 APP_LOGDIR
 APP_CONFDIR
@@ -681,6 +682,7 @@ enable_silent_rules
 with_confdir
 with_logdir
 with_rundir
+with_dbdir
 with_user
 with_group
 '
@@ -1317,6 +1319,8 @@ Optional Packages:
                           /var/log/${PACKAGE}/${PACKAGE}.log)
   --with-rundir=PATH      set file path for source rundir (default:
                           /var/run/${PACKAGE})
+  --with-dbdir=PATH       set file path for data files (default:
+                          "/var/db/${PACKAGE}")
   --with-user=${PACKAGE}  set executing user name
   --with-group=${PACKAGE} set executing group name
 
@@ -2762,6 +2766,35 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 APP_RUNDIR="$APP_RUNDIR"
+
+
+
+
+# Check whether --with-dbdir was given.
+if test "${with_dbdir+set}" = set; then :
+  withval=$with_dbdir;  if test ! -z "$with_dbdir" ; then
+		case $with_dbdir in
+			/*)
+				APP_DBDIR="$with_dbdir"
+				;;
+			*)
+                                as_fn_error $? "You must specify an absolute path to --with-dbdir=PATH" "$LINENO" 5
+				;;
+		esac
+	else
+		APP_DBDIR="/var/db/${PACKAGE}"
+	fi
+else
+   APP_DBDIR="/var/db/${PACKAGE}"
+fi
+
+
+cat >>confdefs.h <<_ACEOF
+#define APP_DBDIR "$APP_DBDIR"
+_ACEOF
+
+APP_DBDIR="$APP_DBDIR"
+
 
 
 case $host_os in

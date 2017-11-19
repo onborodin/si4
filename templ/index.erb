@@ -1,22 +1,18 @@
-<%
-conn = PG.connect :dbname => "mail"
-res = conn.exec('select * from alias order by id')
-%>
-
-<%= %>
-
+<%# $Id$ %>
 <table>
     <thead>
-        <td>id</td>
+        <td>#</td>
         <td>address</td>
         <td>goto</td>
     </thead>
-<% res.each do |row| %>
+<% n = 0 %>
+<% @alias.list.each do |row| %>
+    <% n += 1 %>
     <tr>
-    <td><%= row['id'] %></td>
+    <td><%= n %>
     <td><%= row['address'] %></td>
     <td><%= row['goto'] %></td>
 <% end %>
 </table>
-
+<%# EOF %>
 

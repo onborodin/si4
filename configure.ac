@@ -114,6 +114,26 @@ AC_ARG_WITH(rundir,
 AC_DEFINE_UNQUOTED(APP_RUNDIR, "$APP_RUNDIR", [location of pid file])
 AC_SUBST(APP_RUNDIR, "$APP_RUNDIR")
 
+
+AC_ARG_WITH(dbdir,
+	AS_HELP_STRING([--with-dbdir=PATH],[set file path for data files (default: "/var/db/${PACKAGE}")]),
+	[ if test ! -z "$with_dbdir" ; then
+		case $with_dbdir in
+			/*)
+				APP_DBDIR="$with_dbdir"
+				;;
+			*)
+                                AC_MSG_ERROR(You must specify an absolute path to --with-dbdir=PATH)
+				;;
+		esac
+	else
+		APP_DBDIR="/var/db/${PACKAGE}"
+	fi ],
+	[ APP_DBDIR="/var/db/${PACKAGE}" ])
+AC_DEFINE_UNQUOTED(APP_DBDIR, "$APP_DBDIR", [location of application data])
+AC_SUBST(APP_DBDIR, "$APP_DBDIR")
+
+
 case $host_os in
     *freebsd* )
 	default_user="www"
