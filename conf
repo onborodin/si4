@@ -1,5 +1,0 @@
-{
-"a" : "b",
-":logfile":"/var/log/:si4.log",
-"logfile":"/var/log/si4.log"
-}
