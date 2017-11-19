@@ -3,7 +3,7 @@
 set -e
 
 NAME=si4
-PIDFILE=/var/run/si4/$NAME.pid
+PIDFILE=/var/run/si4/pid
 DAEMON=/usr/local/sbin/si4
 DAEMON_OPTS=""
 

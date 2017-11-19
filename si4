@@ -1,15 +1,13 @@
 #!/usr/local/bin/ruby
 
 require 'json'
-require 'sinatra/base'
 require 'logger'
 require 'pg'
-
-require 'digest/md5' 
-require 'digest/sha1' 
+#require 'digest/md5' 
+#require 'digest/sha1' 
 require 'base64' 
 require 'htauth'
-
+require 'sinatra/base'
 require 'thin'
 
 class SecureThinBackend < Thin::Backends::TcpServer
@@ -40,8 +38,11 @@ class App < Sinatra::Base
     end
 
     def user?(user, password)
-        logger.info("Auth: User #{user} try access")
-        return false unless File.readable?(@@pwfile)
+        logger.info("Auth: User #{user} try get access")
+        unless File.readable?(@@pwfile) then
+            logger.warning("Auth: Cannot read #{@@pwfile}")
+            return false
+        end
         File.open(@@pwfile).each do | line |
             htuser, digest = line.strip.split(':')
             next unless htuser == user
@@ -49,11 +50,13 @@ class App < Sinatra::Base
                 dummy, apr, salt = digest.split('$')
                 md5 = HTAuth::Md5.new( 'salt' => salt )
                 if md5.encode(password) == digest then
+                    logger.info("Auth: User #{user} access granted")
                     return true
                 end
             elsif digest.match(/SHA/) then
                 sha1 = HTAuth::Sha1.new
                 if sha1.encode(password) == digest then
+                    logger.info("Auth: User #{user} access granted")
                     return true
                 end
             end
@@ -62,9 +65,9 @@ class App < Sinatra::Base
     end
 
     configure do
-        logfile = File.new(@weblog, 'a')
-        logfile.sync = true
-        use Rack::CommonLogger, logfile
+#        logfile = File.new(@weblog, 'a')
+#        logfile.sync = true
+#        use Rack::CommonLogger, logfile
 
         set :public_folder, '/usr/local/share/si4/public'
         set :views, '/usr/local/share/si4/templ'

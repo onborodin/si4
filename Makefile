@@ -194,6 +194,8 @@ DEFS = -DPACKAGE_NAME=\"si4.pl\" -DPACKAGE_TARNAME=\"si4-pl\" -DPACKAGE_VERSION=
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
+GEM = /usr/local/bin/gem
+HAVE_GEM = true
 HAVE_RUBY = true
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
@@ -279,10 +281,9 @@ nobase_etc_SCRIPTS = rc.d/si4
 sbin_SCRIPTS = si4
 confdir = /usr/local/etc/si4
 dist_conf_DATA = \
-	si4.pw.example \
-	si4.crt.example \
-	si4.conf.example \
-	si4.key.example
+	pw.example \
+	crt.example \
+	key.example
 
 nobase_dist_pkgdata_DATA = \
 	public/css/app.css \
@@ -777,7 +778,6 @@ install-data-hook:
 	for data in $(nobase_conf_DATA);do \
 	  chmod 0644 $(DESTDIR)$(APP_CONFDIR)/$$data; \
 	done
-
 #EOF
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -5,11 +5,19 @@ AC_PREFIX_DEFAULT(/usr/local)
 PACKAGE=si4
 
 AC_CHECK_PROG(HAVE_RUBY, ruby, true, false, /usr/local/bin /usr/bin)
-if test "x$HAVE_PERL" = "xfalse"; then
+if test "x$HAVE_RUBY" == "xfalse"; then
 	AC_MSG_ERROR([Requested program ruby not found])
 fi
+
+AC_CHECK_PROG(HAVE_GEM, gem, true, false, /usr/local/bin /usr/bin)
+if test "x$HAVE_GEM" == "xfalse"; then
+	AC_MSG_ERROR([Requested program gem not found])
+fi
+
 AC_SUBST(RUBY, ruby)
 AC_PATH_PROG([RUBY],[ruby])
+AC_PATH_PROG([GEM],[gem])
+
 
 AC_PROG_INSTALL
 
@@ -154,8 +162,30 @@ AC_DEFINE_UNQUOTED(APP_GROUP, "$APP_GROUP", [effective group id])
 AC_SUBST(APP_GROUP, "$APP_GROUP")
 
 
+
 AC_DEFINE_UNQUOTED(APP_LIBDIR, ${prefix}/share/${PACKAGE}, [application lib directory])
 AC_SUBST(APP_LIBDIR, ${prefix}/share/${PACKAGE})
+
+AC_DEFUN([AC_RUBY_MODULES],[
+ac_ruby_modules="$1"
+for ac_ruby_module in $ac_ruby_modules; do
+AC_MSG_CHECKING(for ruby module $ac_ruby_module)
+gem list -i "^$ac_ruby_module$" > /dev/null 2>&1
+if test $? -ne 0; then
+    AC_MSG_RESULT(no);
+    AC_MSG_ERROR(You must install ruby module $ac_ruby_module)
+  else
+    AC_MSG_RESULT(ok);
+fi
+done])
+
+AC_RUBY_MODULES([
+sinatra
+thin
+sqlite3
+json
+htauth
+])
 
 
 

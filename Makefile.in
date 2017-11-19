@@ -194,6 +194,8 @@ DEFS = @DEFS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
+GEM = @GEM@
+HAVE_GEM = @HAVE_GEM@
 HAVE_RUBY = @HAVE_RUBY@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -279,10 +281,9 @@ EXTRA_DIST = \
 sbin_SCRIPTS = si4
 confdir = @APP_CONFDIR@
 dist_conf_DATA = \
-	si4.pw.example \
-	si4.crt.example \
-	si4.conf.example \
-	si4.key.example
+	pw.example \
+	crt.example \
+	key.example
 
 nobase_dist_pkgdata_DATA = \
 	public/css/app.css \
@@ -777,7 +778,6 @@ install-data-hook:
 	for data in $(nobase_conf_DATA);do \
 	  chmod 0644 $(DESTDIR)$(APP_CONFDIR)/$$data; \
 	done
-
 #EOF
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
