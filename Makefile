@@ -180,6 +180,7 @@ ACLOCAL = ${SHELL} /home/ziggi/sinatra-tmpl/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 APP_CONFDIR = /usr/local/etc/si4
+APP_DBDIR = /var/db/si4
 APP_GROUP = www
 APP_LIBDIR = /usr/local/share/si4
 APP_LOGDIR = /var/log/si4
@@ -190,7 +191,7 @@ AUTOHEADER = ${SHELL} /home/ziggi/sinatra-tmpl/missing autoheader
 AUTOMAKE = ${SHELL} /home/ziggi/sinatra-tmpl/missing automake-1.15
 AWK = gawk
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"si4.pl\" -DPACKAGE_TARNAME=\"si4-pl\" -DPACKAGE_VERSION=\"0.01\" -DPACKAGE_STRING=\"si4.pl\ 0.01\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DPACKAGE=\"si4-pl\" -DVERSION=\"0.01\" -DAPP_CONFDIR=\"/usr/local/etc/si4\" -DAPP_LOGDIR=\"/var/log/si4\" -DAPP_RUNDIR=\"/var/run/si4\" -DAPP_USER=\"www\" -DAPP_GROUP=\"www\" -DAPP_LIBDIR=/usr/local/share/si4
+DEFS = -DPACKAGE_NAME=\"si4.pl\" -DPACKAGE_TARNAME=\"si4-pl\" -DPACKAGE_VERSION=\"0.01\" -DPACKAGE_STRING=\"si4.pl\ 0.01\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DPACKAGE=\"si4-pl\" -DVERSION=\"0.01\" -DAPP_CONFDIR=\"/usr/local/etc/si4\" -DAPP_LOGDIR=\"/var/log/si4\" -DAPP_RUNDIR=\"/var/run/si4\" -DAPP_DBDIR=\"/var/db/si4\" -DAPP_USER=\"www\" -DAPP_GROUP=\"www\" -DAPP_LIBDIR=/usr/local/share/si4
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 

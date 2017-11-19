@@ -40,48 +40,48 @@ PATH: ~/bin
 ## Core tests. ##
 ## ----------- ##
 
-configure:1796: checking for a BSD-compatible install
-configure:1864: result: /usr/bin/install -c
-configure:1875: checking whether build environment is sane
-configure:1930: result: yes
-configure:2081: checking for a thread-safe mkdir -p
-configure:2120: result: /usr/local/bin/gmkdir -p
-configure:2127: checking for gawk
-configure:2143: found /usr/local/bin/gawk
-configure:2154: result: gawk
-configure:2165: checking whether make sets $(MAKE)
-configure:2187: result: yes
-configure:2216: checking whether make supports nested variables
-configure:2233: result: yes
-configure:2365: checking for ruby
-configure:2381: found /usr/local/bin/ruby
-configure:2393: result: true
-configure:2407: checking for gem
-configure:2423: found /usr/local/bin/gem
-configure:2435: result: true
-configure:2451: checking for ruby
-configure:2469: found /usr/local/bin/ruby
-configure:2481: result: /usr/local/bin/ruby
-configure:2491: checking for gem
-configure:2509: found /usr/local/bin/gem
-configure:2521: result: /usr/local/bin/gem
-configure:2537: checking build system type
-configure:2551: result: x86_64-unknown-freebsd11.1
-configure:2571: checking host system type
-configure:2584: result: x86_64-unknown-freebsd11.1
-configure:2853: checking for ruby module sinatra
-configure:2861: result: ok
-configure:2853: checking for ruby module thin
-configure:2861: result: ok
-configure:2853: checking for ruby module sqlite3
-configure:2861: result: ok
-configure:2853: checking for ruby module json
-configure:2861: result: ok
-configure:2853: checking for ruby module htauth
-configure:2861: result: ok
-configure:3015: checking that generated files are newer than configure
-configure:3021: result: done
-configure:3053: creating ./config.status
+configure:1800: checking for a BSD-compatible install
+configure:1868: result: /usr/bin/install -c
+configure:1879: checking whether build environment is sane
+configure:1934: result: yes
+configure:2085: checking for a thread-safe mkdir -p
+configure:2124: result: /usr/local/bin/gmkdir -p
+configure:2131: checking for gawk
+configure:2147: found /usr/local/bin/gawk
+configure:2158: result: gawk
+configure:2169: checking whether make sets $(MAKE)
+configure:2191: result: yes
+configure:2220: checking whether make supports nested variables
+configure:2237: result: yes
+configure:2369: checking for ruby
+configure:2385: found /usr/local/bin/ruby
+configure:2397: result: true
+configure:2411: checking for gem
+configure:2427: found /usr/local/bin/gem
+configure:2439: result: true
+configure:2455: checking for ruby
+configure:2473: found /usr/local/bin/ruby
+configure:2485: result: /usr/local/bin/ruby
+configure:2495: checking for gem
+configure:2513: found /usr/local/bin/gem
+configure:2525: result: /usr/local/bin/gem
+configure:2541: checking build system type
+configure:2555: result: x86_64-unknown-freebsd11.1
+configure:2575: checking host system type
+configure:2588: result: x86_64-unknown-freebsd11.1
+configure:2886: checking for ruby module sinatra
+configure:2894: result: ok
+configure:2886: checking for ruby module thin
+configure:2894: result: ok
+configure:2886: checking for ruby module sqlite3
+configure:2894: result: ok
+configure:2886: checking for ruby module json
+configure:2894: result: ok
+configure:2886: checking for ruby module htauth
+configure:2894: result: ok
+configure:3048: checking that generated files are newer than configure
+configure:3054: result: done
+configure:3086: creating ./config.status
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -116,6 +116,7 @@ AM_DEFAULT_V='$(AM_DEFAULT_VERBOSITY)'
 AM_DEFAULT_VERBOSITY='1'
 AM_V='$(V)'
 APP_CONFDIR='/usr/local/etc/si4'
+APP_DBDIR='/var/db/si4'
 APP_GROUP='www'
 APP_LIBDIR='/usr/local/share/si4'
 APP_LOGDIR='/var/log/si4'
@@ -126,7 +127,7 @@ AUTOHEADER='${SHELL} /home/ziggi/sinatra-tmpl/missing autoheader'
 AUTOMAKE='${SHELL} /home/ziggi/sinatra-tmpl/missing automake-1.15'
 AWK='gawk'
 CYGPATH_W='echo'
-DEFS='-DPACKAGE_NAME=\"si4.pl\" -DPACKAGE_TARNAME=\"si4-pl\" -DPACKAGE_VERSION=\"0.01\" -DPACKAGE_STRING=\"si4.pl\ 0.01\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DPACKAGE=\"si4-pl\" -DVERSION=\"0.01\" -DAPP_CONFDIR=\"/usr/local/etc/si4\" -DAPP_LOGDIR=\"/var/log/si4\" -DAPP_RUNDIR=\"/var/run/si4\" -DAPP_USER=\"www\" -DAPP_GROUP=\"www\" -DAPP_LIBDIR=/usr/local/share/si4'
+DEFS='-DPACKAGE_NAME=\"si4.pl\" -DPACKAGE_TARNAME=\"si4-pl\" -DPACKAGE_VERSION=\"0.01\" -DPACKAGE_STRING=\"si4.pl\ 0.01\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DPACKAGE=\"si4-pl\" -DVERSION=\"0.01\" -DAPP_CONFDIR=\"/usr/local/etc/si4\" -DAPP_LOGDIR=\"/var/log/si4\" -DAPP_RUNDIR=\"/var/run/si4\" -DAPP_DBDIR=\"/var/db/si4\" -DAPP_USER=\"www\" -DAPP_GROUP=\"www\" -DAPP_LIBDIR=/usr/local/share/si4'
 ECHO_C=''
 ECHO_N='-n'
 ECHO_T=''
@@ -218,6 +219,7 @@ target_alias=''
 #define APP_CONFDIR "/usr/local/etc/si4"
 #define APP_LOGDIR "/var/log/si4"
 #define APP_RUNDIR "/var/run/si4"
+#define APP_DBDIR "/var/db/si4"
 #define APP_USER "www"
 #define APP_GROUP "www"
 #define APP_LIBDIR /usr/local/share/si4
@@ -239,11 +241,11 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating Makefile
-config.status:772: creating si4
-config.status:772: creating si4.service
-config.status:772: creating rc.d/si4
-config.status:772: creating init.d/si4
+config.status:773: creating Makefile
+config.status:773: creating si4
+config.status:773: creating si4.service
+config.status:773: creating rc.d/si4
+config.status:773: creating init.d/si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -260,7 +262,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -277,7 +279,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -294,7 +296,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -311,7 +313,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -328,7 +330,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -345,7 +347,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -362,7 +364,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -379,7 +381,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -396,7 +398,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -413,7 +415,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -430,7 +432,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -447,7 +449,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -464,7 +466,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -481,7 +483,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -498,7 +500,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -515,4 +517,4 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on think.unix7.org
 
-config.status:772: creating si4
+config.status:773: creating si4

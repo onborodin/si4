@@ -121,9 +121,9 @@ class User < DB
     def add(name, domainid, password)
         return false if self.name?(name, domainid)
         return false unless @domain.id?(domainid)
-        userid = self.nextid
+        id = self.nextid
         self.query("insert into user(id, name, domainid, password) 
-                        values (#{userid}, '#{name}', #{domainid}, '#{password}')")
+                        values (#{id}, '#{name}', #{domainid}, '#{password}')")
         self.name?(name, domainid)
     end
 
@@ -133,18 +133,72 @@ class User < DB
         !self.id?(userid)
     end
 
-    def context
-        self.instance_variables.map do |attribute|
-            { attribute => self.instance_variable_get(attribute) }
-        end
-    end
 end
 
+class Alias < DB
+
+    def initialize(db)
+        super(db)
+        @domain = Domain.new(db)
+    end
+
+    def count
+        res = self.query("select count(id) as count from alias")
+        res.first['count']
+    end
+
+    def nextid
+        return 1 if self.count == 0
+        res = self.query("select id from alias order by id desc limit 1")
+        res.first['id'] += 1
+    end
+
+    def list
+        self.query("select a.id, a.name, a.domainid, d.name as domain, goto
+                    from alias a, domain d
+                    where a.domainid = d.id
+                    order by d.name, a.name")
+    end
+
+    def name?(name, domainid)
+        return false unless @domain.id?(domainid)
+        res = self.query("select a.id from alias a, domain d 
+                            where a.name = '#{name}' and a.domainid = d.id limit 1")
+        return true if res.count > 0
+        false
+    end
+
+    def id?(userid)
+        res = self.query("select id from alias where id = '#{userid}' limit 1")
+        return true if res.count > 0
+        false
+    end
+
+    def add(name, domainid, goto)
+        return false if self.name?(name, domainid)
+        return false unless @domain.id?(domainid)
+        id = self.nextid
+        self.query("insert into add(id, name, domainid, goto) 
+                        values (#{id}, '#{name}', #{domainid}, '#{goto}')")
+        self.name?(name, domainid)
+    end
+
+    def delete(id)
+        return true if not self.id?(id)
+        self.query("delete from alias where id = #{id}")
+        !self.id?(id)
+    end
+
+end
 
 d = Domain.new('db')
 u = User.new('db')
-puts u.list
-puts u.name?(2)
+#puts u.list
+#puts u.name?("aa", 1)
 
+a = Alias.new('db')
+a.list.each do | row |
+    puts row
+end
 #EOF
 

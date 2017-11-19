@@ -2,26 +2,201 @@
 
 require 'json'
 require 'logger'
-require 'pg'
+require 'sqlite3'
 #require 'digest/md5' 
 #require 'digest/sha1' 
-require 'base64' 
+#require 'base64' 
 require 'htauth'
 require 'sinatra/base'
 require 'thin'
 
-class Alias
+
+class DB
     def initialize(dbname)
         @dbname = dbname
     end
-    def dbname
-        @dbname
+
+    def query(query)
+        db = SQLite3::Database.open @dbname
+        db.results_as_hash = true
+        res = db.execute(query)
+        db.close unless db.closed?
+        res
     end
+end
+
+class Domain < DB
+
+    def count
+        res = self.query("select count(id) as count from domain")
+        res.first['count']
+    end
+
+    def nextid
+        return 1 if self.count == 0
+        res = self.query("select id from domain order by id desc limit 1")
+        res.first['id'] += 1
+    end
+
     def list
-        conn = PG.connect :dbname => @dbname
-        res = conn.exec('select * from alias order by id')
-        return res
+        self.query("select * from domain order by id")
     end
+
+    def name?(name)
+        res = self.query("select * from domain where name = '#{name}' order by id limit 1")
+        return true if res.count > 0
+        false
+    end
+
+    def id?(id)
+        res = self.query("select * from domain where id = '#{id}' limit 1")
+        return true if res.count > 0
+        false
+    end
+
+    def id(name)
+        res = self.query("select id from domain where name = '#{name}' order by id limit 1")
+        return nil if res.count == 0
+        res.first['id']
+    end
+
+    def name(id)
+        res = self.query("select name from domain where id = '#{id}' limit 1")
+        return nil if res.count == 0
+        res.first['name']
+    end
+
+    def add(name)
+        return false if self.name?(name)
+        id = self.nextid
+        self.query("insert into domain (id, name) values (#{id}, '#{name}')")
+        self.name?(name)
+    end
+
+    def delete(id)
+        return true unless self.id?(id)
+        self.query("delete from domain where id = '#{id}'")
+        !self.id?(id)
+    end
+
+    def update(id, newname)
+        return false unless self.id?(id)
+        return false if self.name?(newname)
+        self.query("update domain set name = '#{newname}' where id = '#{id}'")
+        self.name?(newname)
+    end
+end
+
+class User < DB
+
+    def initialize(db)
+        super(db)
+        @domain = Domain.new(db)
+    end
+
+    def count
+        res = self.query("select count(id) as count from user")
+        res.first['count']
+    end
+
+    def nextid
+        return 1 if self.count == 0
+        res = self.query("select id from user order by id desc limit 1")
+        res.first['id'] += 1
+    end
+
+    def list
+        self.query("select u.id, u.name, u.domainid, d.name as domain, u.password 
+                    from user u, domain d
+                    where u.domainid = d.id 
+                    order by d.name, u.name")
+    end
+
+    def name?(name, domainid)
+        return false unless @domain.id?(domainid)
+        res = self.query("select u.id from user u, domain d 
+                            where u.name = '#{name}' and u.domainid = d.id limit 1")
+        return true if res.count > 0
+        false
+    end
+
+    def id?(userid)
+        res = self.query("select id from user where id = '#{userid}' limit 1")
+        return true if res.count > 0
+        false
+    end
+
+    def add(name, domainid, password)
+        return false if self.name?(name, domainid)
+        return false unless @domain.id?(domainid)
+        id = self.nextid
+        self.query("insert into user(id, name, domainid, password) 
+                        values (#{id}, '#{name}', #{domainid}, '#{password}')")
+        self.name?(name, domainid)
+    end
+
+    def delete(userid)
+        return true if not self.id?(userid)
+        self.query("delete from user where id = #{userid}")
+        !self.id?(userid)
+    end
+
+end
+
+class Alias < DB
+
+    def initialize(db)
+        super(db)
+        @domain = Domain.new(db)
+    end
+
+    def count
+        res = self.query("select count(id) as count from alias")
+        res.first['count']
+    end
+
+    def nextid
+        return 1 if self.count == 0
+        res = self.query("select id from alias order by id desc limit 1")
+        res.first['id'] += 1
+    end
+
+    def list
+        self.query("select a.id, a.name, a.domainid, d.name as domain, goto
+                    from alias a, domain d
+                    where a.domainid = d.id
+                    order by d.name, a.name")
+    end
+
+    def name?(name, domainid)
+        return false unless @domain.id?(domainid)
+        res = self.query("select a.id from alias a, domain d 
+                            where a.name = '#{name}' and a.domainid = d.id limit 1")
+        return true if res.count > 0
+        false
+    end
+
+    def id?(userid)
+        res = self.query("select id from alias where id = '#{userid}' limit 1")
+        return true if res.count > 0
+        false
+    end
+
+    def add(name, domainid, goto)
+        return false if self.name?(name, domainid)
+        return false unless @domain.id?(domainid)
+        id = self.nextid
+        self.query("insert into add(id, name, domainid, goto) 
+                        values (#{id}, '#{name}', #{domainid}, '#{goto}')")
+        self.name?(name, domainid)
+    end
+
+    def delete(id)
+        return true if not self.id?(id)
+        self.query("delete from alias where id = #{id}")
+        !self.id?(id)
+    end
+
 end
 
 
@@ -39,19 +214,24 @@ class App < Sinatra::Base
 
     @@pwfile = "@APP_CONFDIR@/pw"
 
-    @weblog = "@APP_LOGDIR@/access.log"
-    @errlog = "@APP_LOGDIR@/error.log"
-    @pidfile = "@APP_RUNDIR@/pid"
+    @@weblog = "@APP_LOGDIR@/access.log"
+    @@errlog = "@APP_LOGDIR@/error.log"
+    @@pidfile = "@APP_RUNDIR@/pid"
 
-    @crtfile = "@APP_CONFDIR@/crt"
-    @keyfile = "@APP_CONFDIR@/key"
+    @@crtfile = "@APP_CONFDIR@/crt"
+    @@keyfile = "@APP_CONFDIR@/key"
+    @@dbname = "@APP_DBDIR@/db"
+
+    @@user = User.new(@@dbname)
+    @@domain = Domain.new(@@dbname)
+    @@alias = Alias.new(@@dbname)
 
     def self.pidfile
-        @pidfile
+        @@pidfile
     end
 
     def self.errlog
-        @errlog
+        @@errlog
     end
 
     def user?(user, password)
@@ -82,7 +262,7 @@ class App < Sinatra::Base
     end
 
     configure do
-#        logfile = File.new(@weblog, 'a')
+#        logfile = File.new(@@weblog, 'a')
 #        logfile.sync = true
 #        use Rack::CommonLogger, logfile
 
@@ -104,8 +284,8 @@ class App < Sinatra::Base
             def server_settings
                 {
                     :backend          => SecureThinBackend,
-                    :private_key_file => @keyfile,
-                    :cert_chain_file  => @crtfile,
+                    :private_key_file => @@keyfile,
+                    :cert_chain_file  => @@crtfile,
                     :verify_peer      => false
                 }
             end
@@ -126,7 +306,17 @@ class App < Sinatra::Base
 
     helpers do
         def auth? 
-            halt 401 unless session[:user]
+            redirect to '/login' unless session[:user]
+#            halt 401 unless session[:user]
+        end
+        def user
+            @@user
+        end
+        def domain
+            @@domain
+        end
+        def alias
+            @@alias
         end
     end
 
@@ -154,18 +344,16 @@ class App < Sinatra::Base
     end
 
     get '/' do
-#        auth?
-        @name = "foo"
-        @alias = Alias.new('mail')
+        auth?
         erb :index
     end
 
     before do
         logger.datetime_format = '%Y-%m-%d %H:%M:%S'
         logger.formatter = proc do |severity, datetime, progname, msg|
-            "#{datetime}: #{severity} #{msg}\n"
+            "SINATRA #{datetime}: #{severity} #{msg}\n"
         end
-        user = session[:user] || 'undef'
+        user = session[:user] or 'undef'
         logger.info("#{request.request_method} #{request.url} from #{request.ip} as #{session[:user]}")
     end
 end

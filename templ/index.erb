@@ -1,18 +1,16 @@
-<%# $Id$ %>
 <table>
     <thead>
         <td>#</td>
-        <td>address</td>
+        <td></td>
         <td>goto</td>
     </thead>
 <% n = 0 %>
-<% @alias.list.each do |row| %>
+<% user.list.each do |row| %>
     <% n += 1 %>
     <tr>
     <td><%= n %>
-    <td><%= row['address'] %></td>
-    <td><%= row['goto'] %></td>
+    <td><%= row['name'] %>@<%= row['domain'] %></td>
+    <td><%= row['password'] %></td>
 <% end %>
 </table>
-<%# EOF %>
 
