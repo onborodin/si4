@@ -2,13 +2,9 @@
 
 require 'sqlite3'
 
-class MailDB
-
+class DB
     def initialize(dbname)
         @dbname = dbname
-    end
-    def dbname
-        @dbname
     end
 
     def query(query)
@@ -18,133 +14,137 @@ class MailDB
         db.close unless db.closed?
         res
     end
+end
 
-    def domain_count
+class Domain < DB
+
+
+    def count
         res = self.query("select count(id) as count from domain")
         res.first['count']
     end
 
-    def domain_nextid
-        return 1 if self.domain_count == 0
+    def nextid
+        return 1 if self.count == 0
         res = self.query("select id from domain order by id desc limit 1")
         res.first['id'] += 1
     end
 
-    def domain_list
+    def list
         self.query("select * from domain order by id")
     end
 
-    def domain_name?(name)
+    def name?(name)
         res = self.query("select * from domain where name = '#{name}' order by id limit 1")
         return true if res.count > 0
         false
     end
 
-    def domain_id?(id)
+    def id?(id)
         res = self.query("select * from domain where id = '#{id}' limit 1")
         return true if res.count > 0
         false
     end
 
-    def domain_id(name)
+    def id(name)
         res = self.query("select id from domain where name = '#{name}' order by id limit 1")
         return nil if res.count == 0
         res.first['id']
     end
 
-    def domain_name(id)
+    def name(id)
         res = self.query("select name from domain where id = '#{id}' limit 1")
         return nil if res.count == 0
         res.first['name']
     end
 
-    def domain_add(name)
-        return false if self.domain_name?(name)
-        id = self.domain_nextid
+    def add(name)
+        return false if self.name?(name)
+        id = self.nextid
         self.query("insert into domain (id, name) values (#{id}, '#{name}')")
-        self.domain_name?(name)
+        self.name?(name)
     end
 
-    def domain_delete(id)
-        return true unless self.domain_id?(id)
-        res = self.query("delete from domain where id = '#{id}'")
-        !self.domain_id?(id)
+    def delete(id)
+        return true unless self.id?(id)
+        self.query("delete from domain where id = '#{id}'")
+        !self.id?(id)
     end
 
-    def domain_update(id, newname)
-        return false unless self.domain_id?(id)
-        return false if self.domain_name?(newname)
+    def update(id, newname)
+        return false unless self.id?(id)
+        return false if self.name?(newname)
         self.query("update domain set name = '#{newname}' where id = '#{id}'")
-        self.domain_name?(newname)
+        self.name?(newname)
+    end
+end
+
+class User < DB
+
+    def initialize(db)
+        super(db)
+        @domain = Domain.new(db)
     end
 
-    #### user ####
-
-    def user_count
+    def count
         res = self.query("select count(id) as count from user")
         res.first['count']
     end
 
-    def user_nextid
-        return 1 if self.user_count == 0
+    def nextid
+        return 1 if self.count == 0
         res = self.query("select id from user order by id desc limit 1")
         res.first['id'] += 1
     end
 
-    def user_list
+    def list
         self.query("select u.id, u.name, u.domainid, d.name as domain, u.password 
                     from user u, domain d
                     where u.domainid = d.id 
                     order by d.name, u.name")
     end
 
-    def user_name?(name, domainid)
-        return false unless self.domain_id?(domainid)
+    def name?(name, domainid)
+        return false unless @domain.id?(domainid)
         res = self.query("select u.id from user u, domain d 
                             where u.name = '#{name}' and u.domainid = d.id limit 1")
         return true if res.count > 0
         false
     end
 
-    def user_id?(userid)
+    def id?(userid)
         res = self.query("select id from user where id = '#{userid}' limit 1")
         return true if res.count > 0
         false
     end
 
-    def user_add(name, domainid, password)
-        return false if self.user_name?(name, domainid)
-        return false unless self.domain_id?(domainid)
-        userid = self.user_nextid
+    def add(name, domainid, password)
+        return false if self.name?(name, domainid)
+        return false unless @domain.id?(domainid)
+        userid = self.nextid
         self.query("insert into user(id, name, domainid, password) 
                         values (#{userid}, '#{name}', #{domainid}, '#{password}')")
-        self.user_name?(name, domainid)
+        self.name?(name, domainid)
     end
 
-    def user_delete(userid)
-        return true if not self.user_id?(userid)
+    def delete(userid)
+        return true if not self.id?(userid)
         self.query("delete from user where id = #{userid}")
-        !self.user_id?(userid)
+        !self.id?(userid)
+    end
+
+    def context
+        self.instance_variables.map do |attribute|
+            { attribute => self.instance_variable_get(attribute) }
+        end
     end
 end
 
-m = MailDB.new('db')
-#puts d.exist?('unix7.org')
-#puts d.exist?('unix8.org')
-#puts d.list.to_s
-#puts d.add('new1')
-#puts d.rename('new1', 'new123')
-#puts d.delete('new123')
-#puts d.list.to_s
 
-#puts m.user_list
-puts m.user_add("abc0", 2, "12345")
-puts m.user_add("abc1", 2, "12345")
-puts m.user_add("abc3", 1, "12345")
-puts m.user_add("abc5", 2, "12345")
-puts m.user_name?("abc1", 1)
-puts m.user_delete(1)
-puts m.user_list
+d = Domain.new('db')
+u = User.new('db')
+puts u.list
+puts u.name?(2)
 
 #EOF
 
