@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!@RUBY@
 
 require 'json'
 require 'sinatra/base'
@@ -10,22 +10,37 @@ require 'digest/sha1'
 require 'base64' 
 require 'htauth'
 
+require 'thin'
+
+class SecureThinBackend < Thin::Backends::TcpServer
+  def initialize(host, port, options)
+    super(host, port)
+    @ssl = true
+    @ssl_options = options
+  end
+end
+
 class App < Sinatra::Base
 
-    @@pwfile = "@APP_CONFDIR@/si4.pw"
+    @@pwfile = "@APP_CONFDIR@/pw"
 
-    @logfile = "@APP_LOGDIR@/access.log"
-    @errfile = "@APP_LOGDIR@/error.log"
-    @pidfile = "@APP_RUNDIR@/app.pid"
+    @weblog = "@APP_LOGDIR@/access.log"
+    @errlog = "@APP_LOGDIR@/error.log"
+    @pidfile = "@APP_RUNDIR@/pid"
 
-    class << self
-        attr_accessor :logfile
-        attr_accessor :errfile
-        attr_accessor :pidfile
-        attr_accessor :pwfile
+    @crtfile = "@APP_CONFDIR@/crt"
+    @keyfile = "@APP_CONFDIR@/key"
+
+    def self.pidfile
+        @pidfile
+    end
+
+    def self.errlog
+        @errlog
     end
 
     def user?(user, password)
+        logger.info("Auth: User #{user} try access")
         return false unless File.readable?(@@pwfile)
         File.open(@@pwfile).each do | line |
             htuser, digest = line.strip.split(':')
@@ -47,7 +62,7 @@ class App < Sinatra::Base
     end
 
     configure do
-        logfile = File.new(@logfile, 'a+')
+        logfile = File.new(@weblog, 'a')
         logfile.sync = true
         use Rack::CommonLogger, logfile
 
@@ -58,11 +73,23 @@ class App < Sinatra::Base
         set :port, 8081
         set :bind, '0.0.0.0'
 
-        enable :sessions
-        disable :show_exceptions 
-        enable :logging
-        enable :dump_errors
-        enable :raise_errors
+        set :sessions, true
+        set :show_exceptions, true 
+        set :logging, true
+        set :dump_errors, true
+        set :raise_errors, true
+        set :quiet, true
+
+        class << settings
+            def server_settings
+                {
+                    :backend          => SecureThinBackend,
+                    :private_key_file => @keyfile,
+                    :cert_chain_file  => @crtfile,
+                    :verify_peer      => false
+                }
+            end
+        end
     end
 
     not_found do
@@ -111,15 +138,23 @@ class App < Sinatra::Base
         erb :index
     end
 
+    before do
+        logger.datetime_format = '%Y-%m-%d %H:%M:%S'
+        logger.formatter = proc do |severity, datetime, progname, msg|
+            "#{datetime}: #{severity} #{msg}\n"
+        end
+        user = session[:user] || 'undef'
+        logger.info("#{request.request_method} #{request.url} from #{request.ip} as #{session[:user]}")
+    end
 end
 
-#Process.euid = Etc.getpwnam("www").uid
+Process.euid = Etc.getpwnam("root").uid
 Process.daemon
 
-logr = File.new(App.errfile, "a+")
-logr.sync = true
-$stdout.reopen(logr)
-$stderr.reopen(logr)
+errlog = File.new(App.errlog, "a+")
+errlog.sync = true
+$stdout.reopen(errlog)
+$stderr.reopen(errlog)
 
 begin
     File.open(App.pidfile, 'w') do

@@ -3,7 +3,7 @@ Description=si4
 
 [Service]
 Type=forking
-PIDFile=@APP_RUNDIR@/si4.pid
+PIDFile=@APP_RUNDIR@/pid
 ExecStart=@prefix@/sbin/si4
 ExecReload=/bin/kill -HUP $MAINPID
 

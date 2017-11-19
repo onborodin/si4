@@ -3,7 +3,7 @@
 set -e
 
 NAME=si4
-PIDFILE=@APP_RUNDIR@/$NAME.pid
+PIDFILE=@APP_RUNDIR@/pid
 DAEMON=@prefix@/sbin/si4
 DAEMON_OPTS=""
 

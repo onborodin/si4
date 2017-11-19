@@ -25,10 +25,9 @@ sbin_SCRIPTS = si4
 
 confdir = @APP_CONFDIR@
 dist_conf_DATA = \
-	si4.pw.example \
-	si4.crt.example \
-	si4.conf.example \
-	si4.key.example
+	pw.example \
+	crt.example \
+	key.example
 
 nobase_dist_pkgdata_DATA = \
 	public/css/app.css \
@@ -46,5 +45,4 @@ nobase_dist_pkgdata_DATA = \
 	templ/layout.erb \
 	templ/login.erb \
 	templ/error.erb
-
 #EOF
