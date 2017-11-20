@@ -7,6 +7,49 @@ require 'htauth'
 require 'sinatra/base'
 require 'thin'
 
+class Tail
+
+    def initialize(file)
+        @file = file
+    end
+
+    def first
+        f = File.open(@file,"r")
+        f.seek(-500, :END)
+        f.readline
+        res = String.new
+        f.each do |line|
+            line.chomp!
+            line += '<br/>'
+            line += "\n"
+            res += line
+        end
+        @pos = f.tell
+        f.close
+        res
+    end
+
+    def last
+        f = File.open(@file, "r")
+        f.seek(@pos)
+        res = String.new
+        f.each do |line| 
+            line.chomp!
+            line += '<br/>'
+            line += "\n"
+            res += line
+        end
+        @pos = f.tell
+        f.close
+        res
+    end
+    def pos
+        @pos
+    end
+    def pos=(pos)
+        @pos = pos
+    end
+end
 
 class DB
     def initialize(dbname)
@@ -341,9 +384,16 @@ class App < Sinatra::Base
     end
 
     get '/' do
-#        auth?
+        #auth?
         erb :index
     end
+
+    get '/tail' do
+        l = true unless params['next']
+        l = false if params['next']
+        erb :tail, :layout => l
+    end
+
 
     before do
         logger.datetime_format = '%Y-%m-%d %H:%M:%S'

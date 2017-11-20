@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-class Tail 
+class Tail
 
     def initialize(file)
         @file = file
@@ -12,6 +12,8 @@ class Tail
         f.readline
         array = Array.new
         f.each do |line|
+            line.chomp!
+            line += '<br/>'
             array.push line
         end
         @pos = f.tell
@@ -40,14 +42,13 @@ end
 
 t = Tail.new("/var/log/debug.log")
 puts t.first
-pos = t.pos
+#pos = t.pos
 
 while true do
-    t.pos = pos
+#    t.pos = pos
     puts t.last
-    pos = t.pos
+#    pos = t.pos
     sleep 1
 end
-
 #EOF
 

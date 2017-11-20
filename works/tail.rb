@@ -11,7 +11,6 @@ end
 current = f.tell
 f.close
 
-
 while true do
     f = File.open(file, "r")
     f.seek(current)

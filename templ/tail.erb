@@ -1,0 +1,59 @@
+<%# $Id$ %>
+<% t = Tail.new("/var/log/debug.log") %>
+
+<% unless params['next'] then %>
+    <div class="callout">
+        <div id="log">
+            <%= t.first %>
+            <% session['logpos'] = t.pos %>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <div id="clear" class="button">Clear</div>
+        <div id="pause" class="button">Pause</div>
+    </div>
+
+    <script>
+        function aTail () { 
+            $.get("", { next : "yes" },
+                    function (data) {
+                        $("#log").append(data);
+                        $("#log").animate({
+                            bottom : "-=100em",
+                        });
+            });
+        };
+
+        $("#clear").click(function() {
+            $("#log").empty();
+        });
+
+        var tailRun = 1;
+
+        var timerId = setInterval(function(){ aTail(); }, 1000);
+
+
+        $("#pause").click(function() {
+            if (tailRun == 1) {
+                clearInterval(timerId);
+                $("#pause").html("Pause");
+                $("#pause").toggleClass("secondary");
+                tailRun = 0;
+            } else {
+                timerId = setInterval(function() {aTail()}, 1000);
+                $("#pause").html("Pause");
+                $("#pause").toggleClass("secondary");
+                tailRun = 1;
+            }
+        });
+    </script>
+
+<% end %>
+
+<% if params['next'] then %>
+    <% t.pos =  session['logpos'] %>
+        <%= t.last %>
+        <% session['logpos'] = t.pos %>
+<% end %>
+<%# EOF %>

@@ -45,5 +45,6 @@ nobase_dist_pkgdata_DATA = \
 	templ/layout.erb \
 	templ/login.erb \
 	templ/error.erb \
+	templ/tail.erb \
 	schema.sql
 #EOF
