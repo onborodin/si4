@@ -301,7 +301,8 @@ nobase_dist_pkgdata_DATA = \
 	templ/index.erb \
 	templ/layout.erb \
 	templ/login.erb \
-	templ/error.erb
+	templ/error.erb \
+	schema.sql
 
 all: all-am
 

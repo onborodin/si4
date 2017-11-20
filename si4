@@ -3,9 +3,6 @@
 require 'json'
 require 'logger'
 require 'sqlite3'
-#require 'digest/md5' 
-#require 'digest/sha1' 
-#require 'base64' 
 require 'htauth'
 require 'sinatra/base'
 require 'thin'
@@ -344,7 +341,7 @@ class App < Sinatra::Base
     end
 
     get '/' do
-        auth?
+#        auth?
         erb :index
     end
 
@@ -377,5 +374,4 @@ end
 
 App.run!
 File.delete App.pidfile if File.exist? App.pidfile
-
 #EOF
