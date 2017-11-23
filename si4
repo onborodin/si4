@@ -320,16 +320,16 @@ class App < Sinatra::Base
         set :raise_errors, true
         set :quiet, true
 
-        class << settings
-            def server_settings
-                {
-                    :backend          => SecureThinBackend,
-                    :private_key_file => @@keyfile,
-                    :cert_chain_file  => @@crtfile,
-                    :verify_peer      => false
-                }
-            end
-        end
+#        class << settings
+#            def server_settings
+#                {
+#                    :backend          => SecureThinBackend,
+#                    :private_key_file => @@keyfile,
+#                    :cert_chain_file  => @@crtfile,
+#                    :verify_peer      => false
+#                }
+#            end
+#        end
     end
 
     not_found do
